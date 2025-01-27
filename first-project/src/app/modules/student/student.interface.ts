@@ -26,7 +26,7 @@ export type Student = {
   dateOfBirth?: string;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
   guardian: Guardian;
   localGuardian: LocalGuardian;
   profileImg?: string;
