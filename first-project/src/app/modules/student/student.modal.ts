@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-import validator from 'validator';
 import {
   Guardian,
   LocalGuardian,
@@ -11,19 +10,19 @@ const userNameSchema = new Schema<UserName>({
   firstName: {
     type: String,
     required: [true, 'First name is required'],
-    maxlength: [
-      20,
-      '{VALUE} is more than 20 characters. First name cannot be more than 20 characters',
-    ],
-    trim: true,
-    validate: {
-      validator: function (value: string) {
-        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
+    // maxlength: [
+    //   20,
+    //   '{VALUE} is more than 20 characters. First name cannot be more than 20 characters',
+    // ],
+    // trim: true,
+    // validate: {
+    //   validator: function (value: string) {
+    //     const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
 
-        return firstNameStr === value;
-      },
-      message: '{VALUE} is not in capitalize format',
-    },
+    //     return firstNameStr === value;
+    //   },
+    //   message: '{VALUE} is not in capitalize format',
+    // },
   },
   middleName: {
     type: String,
@@ -33,10 +32,10 @@ const userNameSchema = new Schema<UserName>({
     type: String,
     required: [true, 'Last name is required'],
     trim: true,
-    validate: {
-      validator: (value: string) => validator.isAlpha(value),
-      message: '{VALUE} is not valid',
-    },
+    // validate: {
+    //   validator: (value: string) => validator.isAlpha(value),
+    //   message: '{VALUE} is not valid',
+    // },
   },
 });
 
@@ -120,10 +119,10 @@ const studentSchema = new Schema<Student>({
     type: String,
     required: [true, 'Email address is required'],
     trim: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not a valid email type',
-    },
+    // validate: {
+    //   validator: (value: string) => validator.isEmail(value),
+    //   message: '{VALUE} is not a valid email type',
+    // },
   },
   dateOfBirth: {
     type: String,
