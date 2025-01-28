@@ -36,6 +36,7 @@ export type TStudent = {
   presentAddress: string;
   permanentAddress: string;
   isActive: 'active' | 'block';
+  isDeleted: boolean;
 };
 
 // for  creating static

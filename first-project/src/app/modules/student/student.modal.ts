@@ -185,6 +185,10 @@ const studentSchema = new Schema<TStudent, StudentModel>({
     default: 'active',
     trim: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // pre save middleware /hook
@@ -200,8 +204,14 @@ studentSchema.pre('save', async function (next) {
   );
   next();
 });
-studentSchema.post('save', function () {
-  console.log(this, `post hook: we saved the data`);
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
+
+// query middleware
+studentSchema.pre('find', function (next) {
+  next();
 });
 
 // create a custom instance method
