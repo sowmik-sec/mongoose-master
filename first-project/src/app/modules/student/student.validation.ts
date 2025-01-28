@@ -75,6 +75,7 @@ const studentValidationSchema = z.object({
     .string()
     .min(1, { message: 'Student ID is required' })
     .transform((val) => (val ? val.trim() : val)),
+  password: z.string().max(20),
   name: userNameValidationSchema,
   gender: z.enum(['male', 'female'], {
     errorMap: () => ({ message: 'Only "male" or "female" is allowed' }),
