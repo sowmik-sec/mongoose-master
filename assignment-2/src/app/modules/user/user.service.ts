@@ -15,7 +15,13 @@ const getAllUsersFromDb = async (): Promise<TUser[]> => {
   return result;
 };
 
+const getSingleUserFromDb = async (id: string): Promise<TUser | null> => {
+  const result = await User.findOne({ id });
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDb,
+  getSingleUserFromDb,
 };
