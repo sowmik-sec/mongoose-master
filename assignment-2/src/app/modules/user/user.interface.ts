@@ -1,6 +1,7 @@
 import { Model } from "mongoose";
 
 export type TUser = {
+  id: string;
   username: string;
   password: string;
   fullName: {

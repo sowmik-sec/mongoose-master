@@ -14,6 +14,7 @@ const addressSchema = z.object({
 
 // Main user validation schema
 const userValidationSchema = z.object({
+  id: z.string(),
   username: z.string().min(1, "Username is required"),
   email: z.string().email("Invalid email format"),
   password: z.string().trim().min(6, "Password must be at least 6 characters"),

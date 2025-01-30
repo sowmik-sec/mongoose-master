@@ -5,6 +5,10 @@ import config from "../../config";
 
 const userSchema = new Schema<TUser, UserModel>(
   {
+    id: {
+      type: String,
+      required: true,
+    },
     username: {
       type: String,
       required: true,
@@ -57,15 +61,12 @@ const userSchema = new Schema<TUser, UserModel>(
     },
   },
   {
+    timestamps: true,
     toJSON: {
       virtuals: true,
     },
   }
 );
-
-userSchema.virtual("fullName").get(function () {
-  return `${this.fullName.firstName} ${this.fullName.lastName}`;
-});
 
 userSchema.statics.isUserExists = async function (id: string) {
   const isExists = await User.findOne({ id });
