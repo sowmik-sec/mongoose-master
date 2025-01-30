@@ -37,8 +37,26 @@ const getAllOrders = async (req: Request, res: Response) => {
     });
   }
 };
+const getTotalPriceForUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await OrderService.getTotalPriceForUser(id);
+    res.status(200).json({
+      success: true,
+      message: "Total price retrieved successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "something went wrong",
+      error: error,
+    });
+  }
+};
 
 export const OrderController = {
   createOrder,
   getAllOrders,
+  getTotalPriceForUser,
 };
