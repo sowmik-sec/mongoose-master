@@ -20,8 +20,14 @@ const getSingleUserFromDb = async (id: string): Promise<TUser | null> => {
   return result;
 };
 
+const deleteUserFromDb = async (id: string) => {
+  const result = await User.deleteOne({ id });
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDb,
   getSingleUserFromDb,
+  deleteUserFromDb,
 };
