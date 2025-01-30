@@ -2,9 +2,12 @@ import { z } from "zod";
 import mongoose from "mongoose";
 
 const orderValidationSchema = z.object({
-  user: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
-    message: "Invalid user ID format",
-  }),
+  user: z
+    .string()
+    .refine((val) => mongoose.Types.ObjectId.isValid(val), {
+      message: "Invalid user ID format",
+    })
+    .transform((val) => new mongoose.Types.ObjectId(val)), // Convert to ObjectId
   price: z.number().positive("Price must be a positive number"),
   productName: z.string().min(1, "Product name is required"),
   quantity: z.number().int().positive("Quantity must be a positive integer"),
