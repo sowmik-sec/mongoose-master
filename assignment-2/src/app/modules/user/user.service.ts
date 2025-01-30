@@ -19,6 +19,10 @@ const getSingleUserFromDb = async (id: string): Promise<TUser | null> => {
   const result = await User.findOne({ id });
   return result;
 };
+const updateUserIntoDb = async (id: string, payload: Partial<TUser>) => {
+  const result = await User.updateOne({ id }, payload, { new: true });
+  return result;
+};
 
 const deleteUserFromDb = async (id: string) => {
   const result = await User.deleteOne({ id });
@@ -29,5 +33,6 @@ export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDb,
   getSingleUserFromDb,
+  updateUserIntoDb,
   deleteUserFromDb,
 };

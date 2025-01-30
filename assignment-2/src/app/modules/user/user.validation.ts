@@ -24,7 +24,27 @@ const userValidationSchema = z.object({
   hobbies: z.array(z.string().min(1, "Hobby cannot be empty")),
   isActive: z.boolean(),
 });
+const updateUserValidationSchema = z.object({
+  id: z.string().optional(),
+  username: z.string().min(1, "Username is required").optional(),
+  email: z.string().email("Invalid email format").optional(),
+  password: z
+    .string()
+    .trim()
+    .min(6, "Password must be at least 6 characters")
+    .optional(),
+  fullName: fullNameSchema.optional(),
+  address: addressSchema.optional(),
+  age: z.number().int().positive("Age must be a positive integer").optional(),
+  hobbies: z.array(z.string().min(1, "Hobby cannot be empty")).optional(),
+  isActive: z.boolean().optional(),
+});
 
 // Type export matching TUser interface
 export type TUserValidation = z.infer<typeof userValidationSchema>;
-export default userValidationSchema;
+export type TUpdateUserValidation = z.infer<typeof updateUserValidationSchema>;
+
+export const UserValidation = {
+  userValidationSchema,
+  updateUserValidationSchema,
+};

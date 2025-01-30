@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { UserServices } from "./user.service";
-import userValidationSchema from "./user.validation";
+import { UserValidation } from "./user.validation";
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const user = req.body;
-    const zodParsedData = userValidationSchema.parse(user);
+    const zodParsedData = UserValidation.userValidationSchema.parse(user);
     const result = await UserServices.createUserIntoDB(zodParsedData);
     res.status(200).json({
       success: true,
@@ -56,6 +56,28 @@ const getSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userData = req.body;
+
+    const zodParsedData =
+      UserValidation.updateUserValidationSchema.parse(userData);
+    const result = await UserServices.updateUserIntoDb(id, zodParsedData);
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "something went wrong",
+      error: error,
+    });
+  }
+};
+
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -78,5 +100,6 @@ export const UserController = {
   createUser,
   getAllUsers,
   getSingleUser,
+  updateUser,
   deleteUser,
 };
