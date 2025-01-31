@@ -6,13 +6,12 @@ import {
   StudentModel,
   TUserName,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First name is required'],
+    trim: true,
     // maxlength: [
     //   20,
     //   '{VALUE} is more than 20 characters. First name cannot be more than 20 characters',
@@ -106,9 +105,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       unique: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User ID is required'],
+      unique: true,
+      ref: 'User',
     },
     name: {
       type: userNameSchema,
@@ -174,18 +175,9 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     },
     profileImg: {
       type: String,
-      required: [true, 'Profile image is required'],
       trim: true,
     },
-    isActive: {
-      type: String,
-      enum: {
-        values: ['active', 'block'],
-        message: '{VALUE} is not valid. Only "active" or "block" is allowed',
-      },
-      default: 'active',
-      trim: true,
-    },
+
     isDeleted: {
       type: Boolean,
       default: false,
@@ -202,24 +194,6 @@ studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
 
-// pre save middleware /hook
-studentSchema.pre('save', async function (next) {
-  console.log(this, `pre hook: we will save the data`);
-
-  // hash password and save into DB
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_round),
-  );
-  next();
-});
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  next();
-});
-
 // query middleware
 studentSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
@@ -233,12 +207,6 @@ studentSchema.pre('findOne', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
-
-// create a custom instance method
-// studentSchema.methods.isUserExists = async function (id: string) {
-//   const existingUser = await Student.findOne({ id });
-//   return existingUser;
-// };
 
 // create a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {
