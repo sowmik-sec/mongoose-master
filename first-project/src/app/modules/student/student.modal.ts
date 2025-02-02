@@ -6,6 +6,8 @@ import {
   StudentModel,
   TUserName,
 } from './student.interface';
+import AppError from '../../errors/AppError';
+import { StatusCodes } from 'http-status-codes';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -128,10 +130,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Email address is required'],
       trim: true,
-      // validate: {
-      //   validator: (value: string) => validator.isEmail(value),
-      //   message: '{VALUE} is not a valid email type',
-      // },
+      unique: true,
     },
     dateOfBirth: {
       type: Date,
@@ -199,6 +198,14 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 
 studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
+});
+
+studentSchema.pre('save', async function (next) {
+  const isExists = await Student.findOne({ email: this.email });
+  if (isExists) {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'User already exists');
+  }
+  next();
 });
 
 // query middleware
