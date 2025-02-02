@@ -208,6 +208,15 @@ studentSchema.pre('save', async function (next) {
   next();
 });
 
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  const result = await Student.findOne({ id: query.id });
+  if (!result) {
+    throw new AppError(StatusCodes.NOT_FOUND, `Student doesn't exist`);
+  }
+  next();
+});
+
 // query middleware
 studentSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
