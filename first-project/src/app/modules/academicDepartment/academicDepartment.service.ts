@@ -11,13 +11,15 @@ const createAcademicDepartmentIntoDB = async (
 const getAllAcademicDepartmentFromDb = async (): Promise<
   TAcademicDepartment[]
 > => {
-  const result = await AcademicDepartment.find();
+  const result = await AcademicDepartment.find().populate('academicFaculty');
   return result;
 };
 const getSingleAcademicDepartmentFromDb = async (
   id: string,
 ): Promise<TAcademicDepartment | null> => {
-  const result = await AcademicDepartment.findOne({ _id: id });
+  const result = await AcademicDepartment.findOne({ _id: id }).populate(
+    'academicFaculty',
+  );
   return result;
 };
 const updateAcademicDepartmentIntoDB = async (
