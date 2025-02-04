@@ -64,7 +64,7 @@ const assignFacultiesWithCourse = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Course deleted successfully',
+    message: 'Faculties assigned successfully',
     data: result,
   });
 });
