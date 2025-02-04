@@ -36,3 +36,21 @@ export const generateStudentId = async (payload: TAcademicSemester) => {
   incrementId = `${payload.year}${payload.code}${incrementId}`;
   return incrementId;
 };
+
+const findLastAdminId = async () => {
+  const lastAdmin = await User.findOne({ role: 'admin' }, { id: 1, _id: 0 })
+    .sort({ createdAt: -1 })
+    .lean();
+  return lastAdmin?.id ? lastAdmin?.id : undefined;
+};
+
+export const generateAdminId = async () => {
+  const lastAdminId = await findLastAdminId();
+  let adminId = '';
+  if (lastAdminId) {
+    adminId = `A-${(Number(lastAdminId.slice(2)) + 1).toString().padStart(4, '0')}`;
+  } else {
+    adminId = `A-${(1).toString().padEnd(4, '0')}`;
+  }
+  return adminId;
+};

@@ -1,10 +1,4 @@
-import { Types } from 'mongoose';
 import { z } from 'zod';
-
-// Helper schema for ObjectId validation
-const objectIdSchema = z.string().refine((value) => {
-  return Types.ObjectId.isValid(value);
-}, 'Invalid ObjectId');
 
 // Name schema
 const nameSchema = z.object({
@@ -32,8 +26,6 @@ const createAdminValidationSchema = z.object({
       .min(6, 'Password must be at least 6 characters')
       .optional(),
     admin: z.object({
-      id: z.string().min(1, 'ID is required'),
-      user: objectIdSchema,
       designation: z.string().min(1, 'Designation is required'),
       name: nameSchema,
       gender: z.enum(['male', 'female'], {
@@ -49,7 +41,6 @@ const createAdminValidationSchema = z.object({
       presentAddress: z.string().min(1, 'Present address is required'),
       permanentAddress: z.string().min(1, 'Permanent address is required'),
       profileImg: z.string().min(1, 'Profile image is required'),
-      isDeleted: z.boolean().default(false),
     }),
   }),
 });

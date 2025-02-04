@@ -1,5 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import { TAdmin, AdminModel } from './admin.interface'; // Adjust the import path as needed
+import AppError from '../../errors/AppError';
+import { StatusCodes } from 'http-status-codes';
 
 const adminSchema = new Schema<TAdmin, AdminModel>({
   id: { type: String, required: true, unique: true },
@@ -28,5 +30,17 @@ adminSchema.statics.isUserExists = async function (id: string) {
   const existingAdmin = await Admin.findOne({ id, isDeleted: false });
   return existingAdmin;
 };
+
+adminSchema.pre('save', async function (next) {
+  try {
+    const res = await Admin.findOne({ email: this.email });
+    if (res) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'User already exists');
+    }
+  } catch (error) {
+    next(error as Error);
+  }
+  next();
+});
 
 export const Admin = mongoose.model<TAdmin, AdminModel>('Admin', adminSchema);
