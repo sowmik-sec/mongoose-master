@@ -7,12 +7,12 @@ const router = express.Router();
 
 // it will call controller func
 router.get('/', FacultyControllers.getAllFaculties);
-router.get('/:FacultyId', FacultyControllers.getSingleFaculty);
+router.get('/:id', FacultyControllers.getSingleFaculty);
 router.patch(
-  '/:FacultyId',
+  '/:id',
   validateRequest(FacultyValidation.updateFacultyValidationSchema),
   FacultyControllers.updateFaculty,
 );
-router.delete('/:FacultyId', FacultyControllers.deleteSingleFaculty);
+router.delete('/:id', FacultyControllers.deleteSingleFaculty);
 
 export const FacultyRoutes = router;
