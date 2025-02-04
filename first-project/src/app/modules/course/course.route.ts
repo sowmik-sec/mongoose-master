@@ -13,12 +13,10 @@ router.post(
 );
 router.get('/:id', CourseControllers.getSingleCourse);
 router.delete('/:id', CourseControllers.deleteCourse);
-// router.put(
-//   '/:id',
-//   validateRequest(
-//     CourseValidation.createCourseValidationSchema,
-//   ),
-//   CourseControllers.,
-// );
+router.put(
+  '/:id',
+  validateRequest(CourseValidation.updateCourseValidationSchema),
+  CourseControllers.updateCourse,
+);
 router.get('/', CourseControllers.getAllCourse);
 export const CourseRoutes = router;

@@ -7,12 +7,12 @@ const router = express.Router();
 
 // it will call controller func
 router.get('/', AdminControllers.getAllAdmins);
-router.get('/:AdminId', AdminControllers.getSingleAdmin);
+router.get('/:id', AdminControllers.getSingleAdmin);
 router.patch(
-  '/:AdminId',
+  '/:id',
   validateRequest(AdminValidation.updateAdminValidationSchema),
   AdminControllers.updateAdmin,
 );
-router.delete('/:AdminId', AdminControllers.deleteSingleAdmin);
+router.delete('/:id', AdminControllers.deleteSingleAdmin);
 
 export const AdminRoutes = router;
