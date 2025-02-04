@@ -45,12 +45,12 @@ const findLastAdminId = async () => {
 };
 
 export const generateAdminId = async () => {
+  let currentId = (0).toString();
   const lastAdminId = await findLastAdminId();
-  let adminId = '';
   if (lastAdminId) {
-    adminId = `A-${(Number(lastAdminId.slice(2)) + 1).toString().padStart(4, '0')}`;
-  } else {
-    adminId = `A-${(1).toString().padEnd(4, '0')}`;
+    currentId = lastAdminId.substring(2);
   }
-  return adminId;
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
+  incrementId = `A-${incrementId}`;
+  return incrementId;
 };

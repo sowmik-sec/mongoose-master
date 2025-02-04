@@ -43,4 +43,18 @@ adminSchema.pre('save', async function (next) {
   next();
 });
 
+adminSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+adminSchema.pre('findOne', function (next) {
+  this.merge({ isDeleted: { $ne: true } });
+  next();
+});
+
+adminSchema.pre('findOneAndUpdate', function (next) {
+  this.merge({ isDeleted: { $ne: true } });
+  next();
+});
 export const Admin = mongoose.model<TAdmin, AdminModel>('Admin', adminSchema);
