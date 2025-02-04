@@ -3,33 +3,33 @@ import AppError from '../../errors/AppError';
 import { StatusCodes } from 'http-status-codes';
 import { User } from '../user/user.model';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { Admin } from './admin.model';
-import { AdminSearchableFields } from './admin.constant';
-import { TAdmin } from './admin.interface';
+import { Faculty } from './faculty.model';
+import { FacultySearchableFields } from './faculty.constant';
+import { TFaculty } from './faculty.interface';
 
-const getAllAdminsFromDb = async (query: Record<string, unknown>) => {
-  const AdminQuery = new QueryBuilder(Admin.find(), query)
-    .search(AdminSearchableFields)
+const getAllFacultiesFromDb = async (query: Record<string, unknown>) => {
+  const FacultyQuery = new QueryBuilder(Faculty.find(), query)
+    .search(FacultySearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await AdminQuery.modelQuery;
+  const result = await FacultyQuery.modelQuery;
   return result;
 };
 
-const getSingleAdminFromDb = async (id: string) => {
-  // const result = await Admin.findOne({ id });
-  const result = await Admin.findOne({ id });
+const getSingleFacultyFromDb = async (id: string) => {
+  // const result = await Faculty.findOne({ id });
+  const result = await Faculty.findOne({ id });
 
   return result;
 };
-const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
-  const { name, ...remainingAdminData } = payload;
+const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
+  const { name, ...remainingFacultyData } = payload;
 
   const modifiedUpdatedData: Record<string, unknown> = {
-    ...remainingAdminData,
+    ...remainingFacultyData,
   };
 
   if (name && Object.keys(name).length) {
@@ -38,7 +38,7 @@ const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
     }
   }
 
-  const result = await Admin.findOneAndUpdate({ id }, modifiedUpdatedData, {
+  const result = await Faculty.findOneAndUpdate({ id }, modifiedUpdatedData, {
     new: true,
     runValidators: true,
   });
@@ -46,17 +46,17 @@ const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
   return result;
 };
 
-const deleteSingleAdminFromDb = async (id: string) => {
+const deleteSingleFacultyFromDb = async (id: string) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const deletedAdmin = await Admin.findOneAndUpdate(
+    const deletedFaculty = await Faculty.findOneAndUpdate(
       { id },
       { isDeleted: true },
       { new: true, session },
     );
-    if (!deletedAdmin) {
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to delete Admin');
+    if (!deletedFaculty) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to delete Faculty');
     }
     const deleteUser = await User.findOneAndUpdate(
       { id },
@@ -68,7 +68,7 @@ const deleteSingleAdminFromDb = async (id: string) => {
     }
     await session.commitTransaction();
     await session.endSession();
-    return deletedAdmin;
+    return deletedFaculty;
   } catch (err) {
     await session.abortTransaction();
     await session.endSession();
@@ -76,9 +76,9 @@ const deleteSingleAdminFromDb = async (id: string) => {
   }
 };
 
-export const AdminServices = {
-  getAllAdminsFromDb,
-  getSingleAdminFromDb,
-  updateAdminIntoDB,
-  deleteSingleAdminFromDb,
+export const FacultyServices = {
+  getAllFacultiesFromDb,
+  getSingleFacultyFromDb,
+  updateFacultyIntoDB,
+  deleteSingleFacultyFromDb,
 };

@@ -6,10 +6,15 @@ import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.modal';
 import { TUser } from './user.interface';
 import { User } from './user.model';
-import { generateAdminId, generateStudentId } from './user.utils';
+import {
+  generateAdminId,
+  generateFacultyId,
+  generateStudentId,
+} from './user.utils';
 import { StatusCodes } from 'http-status-codes';
 import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
+import { Faculty } from '../faculty/faculty.model';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
@@ -84,8 +89,36 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
     throw new AppError(StatusCodes.BAD_REQUEST, (err as Error)?.message);
   }
 };
+const createFacultyIntoDB = async (password: string, payload: TAdmin) => {
+  const userData: Partial<TUser> = {};
+  userData.password = password || (config.default_pass as string);
+  userData.role = 'faculty';
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    userData.id = await generateFacultyId();
+    const newUser = await User.create([userData], { session });
+    if (!newUser.length) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to create user');
+    }
+    payload.id = newUser[0].id;
+    payload.user = newUser[0]._id;
+    const newFaculty = await Faculty.create([payload], { session });
+    if (!newFaculty.length) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to create faculty');
+    }
+    await session.commitTransaction();
+    await session.endSession();
+    return newFaculty;
+  } catch (err) {
+    session.abortTransaction();
+    session.endSession();
+    throw new AppError(StatusCodes.BAD_REQUEST, (err as Error)?.message);
+  }
+};
 
 export const UserServices = {
   createStudentIntoDB,
   createAdminIntoDB,
+  createFacultyIntoDB,
 };
