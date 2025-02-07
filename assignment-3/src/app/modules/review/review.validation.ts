@@ -22,3 +22,8 @@ const createReviewValidation = z.object({
 });
 
 const updateReviewValidation = createReviewValidation.partial();
+
+export const ReviewValidation = {
+  createReviewValidation,
+  updateReviewValidation,
+};
