@@ -85,6 +85,42 @@ const getCourseWithReviewFromDB = async (courseId: string) => {
   return result;
 };
 
+const getBestCourseFromDB = async () => {
+  const result = await Course.aggregate([
+    {
+      $lookup: {
+        from: "reviews",
+        localField: "_id",
+        foreignField: "courseId",
+        pipeline: [
+          {
+            $group: {
+              _id: "$courseId",
+              averageRating: { $avg: "$rating" },
+            },
+          },
+        ],
+        as: "avgRatings",
+      },
+    },
+    {
+      $addFields: {
+        averageRating: { $arrayElemAt: ["$avgRatings.averageRating", 0] },
+      },
+    },
+    {
+      $match: { averageRating: { $exists: true, $ne: null } },
+    },
+    {
+      $sort: { averageRating: -1 },
+    },
+    {
+      $limit: 1,
+    },
+  ]);
+  return result[0];
+};
+
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const { tags, details, ...remainingCourseData } = payload;
   const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
@@ -131,5 +167,6 @@ export const CourseService = {
   createCourseIntoDB,
   getCoursesFromDB,
   getCourseWithReviewFromDB,
+  getBestCourseFromDB,
   updateCourseIntoDB,
 };

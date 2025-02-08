@@ -16,6 +16,7 @@ router.put(
   CourseController.updateCourse
 );
 router.get("/:courseId/reviews", CourseController.getCourseWithReview);
+router.get("/best", CourseController.getBestCourse);
 
 router.get("/", CourseController.getCourses);
 
