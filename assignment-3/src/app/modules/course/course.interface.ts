@@ -7,6 +7,7 @@ type TTag = {
 
 type TDetails = {
   level: "beginner" | "intermediate" | "advanced";
+  description: string;
 };
 
 export type TCourse = {

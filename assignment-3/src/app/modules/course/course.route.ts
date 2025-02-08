@@ -10,6 +10,11 @@ router.post(
   validateRequest(CourseValidation.createCourseValidationSchema),
   CourseController.createCourse
 );
+router.put(
+  "/:id",
+  validateRequest(CourseValidation.updateCourseValidationSchema),
+  CourseController.updateCourse
+);
 
 router.get("/", CourseController.getCourses);
 

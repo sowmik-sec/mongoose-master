@@ -1,6 +1,8 @@
+import { StatusCodes } from "http-status-codes";
+import AppError from "../../errors/AppError";
 import { courseSearchableFields } from "./course.constant";
-import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
+import { TCourse } from "./course.interface";
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
@@ -64,7 +66,50 @@ const getCoursesFromDB = async (payload: Record<string, unknown>) => {
   return result;
 };
 
+const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
+  const { tags, details, ...remainingCourseData } = payload;
+  const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
+    id,
+    remainingCourseData,
+    { new: true, runValidators: true }
+  );
+  if (!updatedBasicCourseInfo) {
+    throw new AppError(StatusCodes.BAD_REQUEST, "Failed to update course");
+  }
+  if (tags && tags.length > 0) {
+    const deletedTags = tags
+      .filter((el) => el.name && el.isDeleted)
+      .map((el) => el.name);
+    const deletedTagsCourse = await Course.findByIdAndUpdate(
+      id,
+      {
+        $pull: {
+          tags: { name: { $in: deletedTags } },
+        },
+      },
+      { new: true, runValidators: true }
+    );
+    if (!deletedTagsCourse) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Failed to update course");
+    }
+    const newTags = tags?.filter((el) => el.name && !el.isDeleted);
+    const newTagCourse = await Course.findByIdAndUpdate(
+      id,
+      {
+        $addToSet: { tags: { $each: newTags } },
+      },
+      { new: true, runValidators: true }
+    );
+    if (!newTagCourse) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Failed to update course");
+    }
+  }
+  const result = await Course.findById(id).populate("category");
+  return result;
+};
+
 export const CourseService = {
   createCourseIntoDB,
   getCoursesFromDB,
+  updateCourseIntoDB,
 };
