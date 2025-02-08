@@ -123,9 +123,18 @@ const getBestCourseFromDB = async () => {
 
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const { tags, details, ...remainingCourseData } = payload;
+  const modifiedUpdatedData: Record<string, unknown> = {
+    ...remainingCourseData,
+  };
+  if (details && Object.keys(details).length) {
+    for (const [key, value] of Object.entries(details)) {
+      modifiedUpdatedData[`details.${key}`] = value;
+    }
+  }
+
   const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
     id,
-    remainingCourseData,
+    modifiedUpdatedData,
     { new: true, runValidators: true }
   );
   if (!updatedBasicCourseInfo) {
@@ -159,6 +168,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
       throw new AppError(StatusCodes.BAD_REQUEST, "Failed to update course");
     }
   }
+
   const result = await Course.findById(id).populate("category");
   return result;
 };
