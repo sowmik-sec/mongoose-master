@@ -1,40 +1,38 @@
 import { z } from "zod";
 
-// Zod schema for a single tag
-const tagValidationSchema = z.object({
-  name: z.string().optional(),
-  isDeleted: z.boolean().optional(),
+const detailsSchema = z.object({
+  level: z.enum(["Beginner", "Intermediate", "Advanced"]),
+  description: z.string().min(1, "Description is required"),
 });
 
-// Zod schema for creating a course
+const tagSchema = z.object({
+  name: z.string().min(1, "Tag name is required"),
+  isDeleted: z.boolean(),
+});
+
 const createCourseValidationSchema = z.object({
   body: z.object({
-    title: z.string().min(1, { message: "Title is required" }),
-    instructor: z.string().min(1, { message: "Instructor is required" }),
-    categoryId: z
-      .string()
-      .regex(/^[0-9a-fA-F]{24}$/, { message: "Invalid category ID" }),
-    price: z.number().positive({ message: "Price must be a positive number" }),
-    tags: z.array(tagValidationSchema).optional(),
-    startDate: z.string().min(1, { message: "Start date is required" }),
-    endDate: z.string().min(1, { message: "End date is required" }),
-    language: z.string().min(1, { message: "Language is required" }),
-    provider: z.string().min(1, { message: "Provider is required" }),
-    durationInWeeks: z
-      .number()
-      .int()
-      .positive({ message: "Duration must be a positive integer" }),
-    details: z.object({
-      level: z.enum(["beginner", "intermediate", "advanced"]),
-      description: z.string().min(1, { message: "Description is required" }),
+    title: z.string().min(1, "Title is required"),
+    instructor: z.string().min(1, "Instructor is required"),
+    categoryId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid category ID"),
+    price: z.number().min(0, "Price must be a positive number"),
+    tags: z.array(tagSchema).optional(),
+    startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid start date",
     }),
+    endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid end date",
+    }),
+    language: z.string().min(1, "Language is required"),
+    provider: z.string().min(1, "Provider is required"),
+    details: detailsSchema,
   }),
 });
 
 // Zod schema for updating a course (all fields optional)
 const updateCourseValidationSchema = createCourseValidationSchema.partial();
 
-export const CourseValidations = {
+export const CourseValidation = {
   createCourseValidationSchema,
   updateCourseValidationSchema,
 };
