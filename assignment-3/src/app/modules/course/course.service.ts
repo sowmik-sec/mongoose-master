@@ -3,6 +3,7 @@ import AppError from "../../errors/AppError";
 import { courseSearchableFields } from "./course.constant";
 import { Course } from "./course.model";
 import { TCourse } from "./course.interface";
+import mongoose from "mongoose";
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
@@ -66,6 +67,24 @@ const getCoursesFromDB = async (payload: Record<string, unknown>) => {
   return result;
 };
 
+const getCourseWithReviewFromDB = async (courseId: string) => {
+  const result = await Course.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(courseId) } },
+    {
+      $lookup: {
+        from: "reviews",
+        localField: "_id",
+        foreignField: "courseId",
+        as: "reviews",
+      },
+    },
+  ]);
+  if (!result.length) {
+    throw new AppError(404, "Course not found");
+  }
+  return result;
+};
+
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const { tags, details, ...remainingCourseData } = payload;
   const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
@@ -111,5 +130,6 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
 export const CourseService = {
   createCourseIntoDB,
   getCoursesFromDB,
+  getCourseWithReviewFromDB,
   updateCourseIntoDB,
 };

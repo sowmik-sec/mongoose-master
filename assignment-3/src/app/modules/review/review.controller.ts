@@ -11,7 +11,6 @@ const createCategory = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
 export const ReviewController = {
   createCategory,
 };

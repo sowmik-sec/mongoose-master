@@ -6,7 +6,7 @@ import { ReviewController } from "./review.controller";
 const router = express.Router();
 
 router.post(
-  "/create-category",
+  "/create-review",
   validateRequest(ReviewValidation.createReviewValidation),
   ReviewController.createCategory
 );

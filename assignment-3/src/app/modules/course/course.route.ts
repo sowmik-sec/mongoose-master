@@ -15,6 +15,7 @@ router.put(
   validateRequest(CourseValidation.updateCourseValidationSchema),
   CourseController.updateCourse
 );
+router.get("/:courseId/reviews", CourseController.getCourseWithReview);
 
 router.get("/", CourseController.getCourses);
 
