@@ -4,10 +4,12 @@ import { TCourse } from "./course.interface";
 const detailsSchema = new Schema({
   level: {
     type: String,
-    enum: ["beginner", "intermediate", "advanced"],
+    enum: ["Beginner", "Intermediate", "Advanced"],
+    required: true,
   },
   description: {
     type: String,
+    required: true,
   },
 });
 
@@ -16,6 +18,7 @@ const courseSchema = new Schema<TCourse>(
     title: {
       type: String,
       required: true,
+      unique: true,
     },
     instructor: {
       type: String,
@@ -23,6 +26,7 @@ const courseSchema = new Schema<TCourse>(
     },
     categoryId: {
       type: Schema.Types.ObjectId,
+      ref: "Category",
       required: true,
     },
     price: {
@@ -33,9 +37,11 @@ const courseSchema = new Schema<TCourse>(
       {
         name: {
           type: String,
+          required: true,
         },
         isDeleted: {
           type: Boolean,
+          required: true,
         },
       },
     ],
@@ -57,7 +63,6 @@ const courseSchema = new Schema<TCourse>(
     },
     durationInWeeks: {
       type: Number,
-      required: true,
     },
     details: detailsSchema,
   },
@@ -65,5 +70,14 @@ const courseSchema = new Schema<TCourse>(
     timestamps: true,
   }
 );
+
+courseSchema.pre("save", function (next) {
+  const start = new Date(this.startDate);
+  const end = new Date(this.endDate);
+  const diffInMs = end.getTime() - start.getTime();
+  const diffInWeeks = Math.ceil(diffInMs / (1000 * 60 * 60 * 24 * 7));
+  this.durationInWeeks = diffInWeeks;
+  next();
+});
 
 export const Course = model<TCourse>("Course", courseSchema);
