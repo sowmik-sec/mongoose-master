@@ -15,4 +15,6 @@ router.patch(
   OfferedCourseControllers.updateOfferedCourse,
 );
 
+router.get('/', OfferedCourseControllers.getAllOfferedCourse);
+
 export const offeredCourseRoutes = router;
