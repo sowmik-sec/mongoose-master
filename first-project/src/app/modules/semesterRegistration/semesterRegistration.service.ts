@@ -9,6 +9,12 @@ import mongoose from 'mongoose';
 import { OfferedCourse } from '../offeredCourse/offeredCourse.model';
 
 const createRegistrationIntoDB = async (payload: TSemesterRegistration) => {
+  /**
+   * Step1: Check if there any registered semester that is already 'UPCOMING'|'ONGOING'
+   * Step2: Check if the semester is exist
+   * Step3: Check if the semester is already registered!
+   * Step4: Create the semester registration
+   */
   const academicSemester = payload?.academicSemester;
 
   // check if there any registered semester that is already 'UPCOMING' or 'ONGOING'
@@ -66,7 +72,20 @@ const updateSingleSemesterRegistrationIntoDB = async (
   id: string,
   payload: Partial<TSemesterRegistration>,
 ) => {
-  // check if the requested semester is exists
+  /**
+   * Step1: Check if the semester is exist
+   * Step2: Check if the requested registered semester is exists
+   * Step3: If the requested semester registration is ended, we will not update anything
+   * Step4: If the requested semester registration is 'UPCOMING', we will let update everything.
+   * Step5: If the requested semester registration is 'ONGOING', we will not update anything  except status to 'ENDED'
+   * Step6: If the requested semester registration is 'ENDED' , we will not update anything
+   *
+   * UPCOMING --> ONGOING --> ENDED
+   *
+   */
+
+  // check if the requested registered semester is exists
+  // check if the semester is already registered!
   const isSemesterRegistrationExists = await SemesterRegistration.findById(id);
   if (!isSemesterRegistrationExists) {
     throw new AppError(StatusCodes.NOT_FOUND, `This semester is not found`);
