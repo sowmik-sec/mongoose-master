@@ -3,6 +3,7 @@ import { StudentControllers } from './student.controller';
 import validateRequest from '../../utils/validateRequest';
 import { studentValidations } from './student.validation';
 import auth from '../../middlewares/auth';
+import { USER_ROLE } from '../user/user.constant';
 const router = express.Router();
 
 // it will call controller func
@@ -12,7 +13,7 @@ router.patch(
   validateRequest(studentValidations.updateStudentValidationSchema),
   StudentControllers.updateStudent,
 );
-router.get('/', auth(), StudentControllers.getAllStudents);
+router.get('/', auth(USER_ROLE.admin), StudentControllers.getAllStudents);
 router.delete('/:id', StudentControllers.deleteSingleStudent);
 
 export const StudentRoutes = router;
