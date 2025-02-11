@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import config from '../../config';
 import AppError from '../../errors/AppError';
@@ -17,7 +18,11 @@ import { Admin } from '../admin/admin.model';
 import { Faculty } from '../faculty/faculty.model';
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
-const createStudentIntoDB = async (password: string, payload: TStudent) => {
+const createStudentIntoDB = async (
+  file: any,
+  password: string,
+  payload: TStudent,
+) => {
   // create a user object
   const userData: Partial<TUser> = {};
   // if password is not given, use default password
@@ -39,7 +44,9 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   try {
     session.startTransaction();
     userData.id = await generateStudentId(admissionSemester);
-    sendImageToCloudinary();
+    const imageName = `${userData.id}${payload.name.firstName}`;
+    const path = file?.path;
+    const profileImg = await sendImageToCloudinary(imageName, path);
     const newUser = await User.create([userData], { session });
     // create a student
     if (!newUser.length) {
@@ -48,6 +55,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     }
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id;
+    payload.profileImg = profileImg?.secure_url;
     // transaction 2
     const newStudent = await Student.create([payload], { session });
     if (!newStudent.length) {
