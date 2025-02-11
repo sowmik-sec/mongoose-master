@@ -15,7 +15,6 @@ import { StatusCodes } from 'http-status-codes';
 import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
 import { Faculty } from '../faculty/faculty.model';
-import { verifyToken } from '../auth/auth.utils';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
@@ -124,22 +123,25 @@ const createFacultyIntoDB = async (password: string, payload: TAdmin) => {
   }
 };
 
-const getMe = async (token: string) => {
-  const decoded = verifyToken(token, config.jwt_access_secret as string);
-  const { userId, role } = decoded;
+const getMe = async (userId: string, role: string) => {
   console.log(userId, role);
   let result = null;
   if (role === 'student') {
-    result = await Student.findOne({ id: userId });
+    result = await Student.findOne({ id: userId }).populate('user');
   }
   if (role === 'admin') {
-    result = await Admin.findOne({ id: userId });
+    result = await Admin.findOne({ id: userId }).populate('user');
   }
   if (role === 'faculty') {
-    result = await Admin.findOne({ id: userId });
+    result = await Admin.findOne({ id: userId }).populate('user');
   }
 
   // const result = await
+  return result;
+};
+
+const changeStatusIntoDB = async (id: string, payload: { status: string }) => {
+  const result = await User.findByIdAndUpdate(id, payload, { new: true });
   return result;
 };
 
@@ -148,4 +150,5 @@ export const UserServices = {
   createAdminIntoDB,
   createFacultyIntoDB,
   getMe,
+  changeStatusIntoDB,
 };
