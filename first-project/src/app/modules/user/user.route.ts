@@ -27,18 +27,30 @@ router.post(
 router.post(
   '/create-faculty',
   auth(USER_ROLE.admin),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(FacultyValidation.createFacultyValidationSchema),
   UserControllers.createFaculty,
 );
 router.post(
   '/change-status/:id',
   auth('admin'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(UserValidation.changeStatusValidationSchema),
   UserControllers.changeStatus,
 );
 
 router.post(
   '/create-admin',
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(AdminValidation.createAdminValidationSchema),
   UserControllers.createAdmin,
 );
