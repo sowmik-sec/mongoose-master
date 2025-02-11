@@ -194,8 +194,8 @@ const forgetPassword = async (userId: string) => {
     config.jwt_access_secret as string,
     '10m',
   );
-  const resetUILink = `http://localhost:3000?id=${user.id}&token=${resetToken}`;
-  sendEmail();
+  const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken}`;
+  sendEmail(user.email, resetUILink);
 };
 
 export const AuthServices = {
