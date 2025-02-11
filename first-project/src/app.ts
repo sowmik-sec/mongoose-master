@@ -13,12 +13,12 @@ app.use(cors({ origin: ['http://localhost:5173'] }));
 // application routes
 app.use('/api/v1', router);
 
-const getAController = (req: Request, res: Response) => {
-  res.send('Hello World!');
-  // Promise.reject();
-};
+// const getAController = (req: Request, res: Response) => {
+//   res.send('Hello World!');
+// Promise.reject();
+// };
 
-app.use('/', getAController);
+// app.use('/', getAController);
 
 app.use(globalErrorHandler);
 
