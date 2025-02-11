@@ -15,6 +15,7 @@ import { StatusCodes } from 'http-status-codes';
 import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
 import { Faculty } from '../faculty/faculty.model';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
@@ -38,6 +39,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   try {
     session.startTransaction();
     userData.id = await generateStudentId(admissionSemester);
+    sendImageToCloudinary();
     const newUser = await User.create([userData], { session });
     // create a student
     if (!newUser.length) {
