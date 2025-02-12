@@ -2,15 +2,13 @@
 import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import { OfferedCourse } from '../offeredCourse/offeredCourse.model';
-import {
-  TEnrolledCourse,
-  TEnrolledCourseMarks,
-} from './enrolledCourse.interface';
+import { TEnrolledCourse } from './enrolledCourse.interface';
 import EnrolledCourse from './enrolledCourse.model';
 import { Student } from '../student/student.modal';
 import mongoose from 'mongoose';
 import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
 import { Course } from '../course/course.model';
+import { Faculty } from '../faculty/faculty.model';
 
 const createEnrolledCourseIntoDB = async (
   userId: string,
@@ -150,6 +148,33 @@ const updateEnrolledCourseMarksIntoDB = async (
   if (!isStudentExists) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Student does not exist');
   }
+  const faculty = await Faculty.findOne({ id: facultyId }, { _id: 1 });
+  if (!faculty) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Faculty not found');
+  }
+  const isCourseBelongToFaculty = await EnrolledCourse.findOne({
+    semesterRegistration,
+    offeredCourse,
+    student,
+    faculty: faculty?._id,
+  });
+  if (!isCourseBelongToFaculty) {
+    throw new AppError(StatusCodes.FORBIDDEN, 'You are forbidden');
+  }
+  const modifyData: Record<string, unknown> = {
+    ...courseMarks,
+  };
+  if (courseMarks && Object.keys(courseMarks).length) {
+    for (const [key, value] of Object.entries(courseMarks)) {
+      modifyData[`courseMarks.${key}`] = value;
+    }
+  }
+  const result = await EnrolledCourse.findByIdAndUpdate(
+    isCourseBelongToFaculty._id,
+    modifyData,
+    { new: true },
+  );
+  return result;
 };
 
 export const EnrolledCourseService = {
