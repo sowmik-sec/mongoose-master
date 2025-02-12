@@ -6,6 +6,7 @@ import { TEnrolledCourse } from './enrolledCourse.interface';
 import EnrolledCourse from './enrolledCourse.model';
 import { Student } from '../student/student.modal';
 import mongoose from 'mongoose';
+import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
 
 const createEnrolledCourseIntoDB = async (
   userId: string,
@@ -25,7 +26,7 @@ const createEnrolledCourseIntoDB = async (
   if (isOfferedCourseExists.maxCapacity <= 0) {
     throw new AppError(StatusCodes.BAD_REQUEST, 'Room is full');
   }
-  const student = await Student.findOne({ id: userId }).select('_id id');
+  const student = await Student.findOne({ id: userId }, { _id: 1 });
   if (!student) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Student not found');
   }
@@ -37,6 +38,21 @@ const createEnrolledCourseIntoDB = async (
   if (isStudentAlreadyEnrolled) {
     throw new AppError(StatusCodes.CONFLICT, 'Student already enrolled');
   }
+
+  // check total credits exceeds max credit
+  const semesterRegistration = await SemesterRegistration.findById(
+    isOfferedCourseExists.semesterRegistration,
+  ).select('maxCredit');
+  // total enrolled credits + new enrolled course credit > maxCredit
+  const enrolledCourses = await EnrolledCourse.aggregate([
+    {
+      $match: {
+        semesterRegistration: isOfferedCourseExists.semesterRegistration,
+        student: student._id,
+      },
+    },
+  ]);
+
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
