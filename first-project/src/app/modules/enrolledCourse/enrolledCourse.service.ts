@@ -2,7 +2,10 @@
 import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import { OfferedCourse } from '../offeredCourse/offeredCourse.model';
-import { TEnrolledCourse } from './enrolledCourse.interface';
+import {
+  TEnrolledCourse,
+  TEnrolledCourseMarks,
+} from './enrolledCourse.interface';
 import EnrolledCourse from './enrolledCourse.model';
 import { Student } from '../student/student.modal';
 import mongoose from 'mongoose';
@@ -126,6 +129,30 @@ const createEnrolledCourseIntoDB = async (
   }
 };
 
+const updateEnrolledCourseMarksIntoDB = async (
+  facultyId: string,
+  payload: Partial<TEnrolledCourse>,
+) => {
+  const { semesterRegistration, offeredCourse, student, courseMarks } = payload;
+  const isSemesterRegistrationExist =
+    await SemesterRegistration.findById(semesterRegistration);
+  if (!isSemesterRegistrationExist) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      'semester registration does not exist',
+    );
+  }
+  const isOfferedCourseExists = await OfferedCourse.findById(offeredCourse);
+  if (!isOfferedCourseExists) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Offered course does not exist');
+  }
+  const isStudentExists = await Student.findById(student);
+  if (!isStudentExists) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Student does not exist');
+  }
+};
+
 export const EnrolledCourseService = {
   createEnrolledCourseIntoDB,
+  updateEnrolledCourseMarksIntoDB,
 };
