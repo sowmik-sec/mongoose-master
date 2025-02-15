@@ -3,7 +3,7 @@ import AppError from "../../errors/AppError";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
 
-const createUserIntoDB = async (payload: TUser): Promise<TUser> => {
+const createUserIntoDB = async (payload: TUser): Promise<TUser | null> => {
   const isUserNameExists = await User.findOne({ username: payload.username });
   if (isUserNameExists) {
     throw new AppError(StatusCodes.BAD_REQUEST, "Username is already exist");
