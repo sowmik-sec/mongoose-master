@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { z } from "zod";
 
 const createReviewValidation = z.object({
@@ -18,6 +19,9 @@ const createReviewValidation = z.object({
       .min(1, { message: "Review text is required" })
       .trim()
       .refine((val) => val.length > 0, "Review cannot be empty"),
+    createdBy: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), {
+      message: "Invalid ObjectId",
+    }),
   }),
 });
 
