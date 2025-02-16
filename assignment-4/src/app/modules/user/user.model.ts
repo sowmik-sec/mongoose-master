@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { TPasswordHistory, TUser } from "./user.interface";
+import { TPasswordHistory, TUser, UserModel } from "./user.interface";
 import bcrypt from "bcrypt";
 import config from "../../config";
 
@@ -14,7 +14,7 @@ const passwordHistorySchema = new Schema<TPasswordHistory>({
   },
 });
 
-const userSchema = new Schema<TUser>({
+const userSchema = new Schema<TUser, UserModel>({
   username: {
     type: String,
     required: true,
@@ -29,6 +29,9 @@ const userSchema = new Schema<TUser>({
     type: String,
     required: true,
     select: 0,
+  },
+  passwordChangedAt: {
+    type: Date,
   },
   role: {
     type: String,
@@ -63,4 +66,13 @@ userSchema.set("toJSON", {
   },
 });
 
-export const User = model<TUser>("User", userSchema);
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
+  passwordChangedTimestamp: Date,
+  jwtIssuedTimestamp: number
+) {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
+  return passwordChangedTime > jwtIssuedTimestamp;
+};
+
+export const User = model<TUser, UserModel>("User", userSchema);
