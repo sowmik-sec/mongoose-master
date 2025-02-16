@@ -23,38 +23,42 @@ const login = async (payload: TAuth) => {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Wrong Password");
   }
 
-  let userData: Partial<TUser> = {};
-  userData.username = user.username;
-  userData.email = user.email;
+  // let userData: Partial<TUser> = {};
+  // userData.username = user.username;
+  // userData.email = user.email;
   const accessToken = createToken(
-    userData,
+    {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    },
     config.jwt_access_secret as string,
     config.jwt_access_expires_in as string
+  );
+  const refreshToken = createToken(
+    {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    },
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expires_in as string
   );
 
   return {
     user,
-    token: accessToken,
+    accessToken,
+    refreshToken,
   };
 };
 
 const changePasswordIntoDB = async (
-  token: string,
+  userData: JwtPayload,
   payload: { currentPassword: string; newPassword: string }
 ) => {
-  let isVerifiedToken: JwtPayload;
-  try {
-    isVerifiedToken = jwt.verify(
-      token,
-      config.jwt_access_secret as string
-    ) as JwtPayload;
-  } catch (error) {
-    throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid or expired token");
-  }
-
-  const user = await User.findOne({
-    username: isVerifiedToken?.username,
-  }).select("+password");
+  const user = await User.findById(userData._id).select("+password");
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, "User not found");
@@ -98,12 +102,6 @@ const changePasswordIntoDB = async (
     );
   }
 
-  // Hash new password
-  const hashedPassword = await bcrypt.hash(
-    payload.newPassword,
-    Number(config.bcrypt_salt_round)
-  );
-
   // Add current password to history before updating
   user.passwordHistory.push({
     password: user.password,
@@ -117,6 +115,7 @@ const changePasswordIntoDB = async (
 
   // Update password
   user.password = payload.newPassword;
+  user.passwordChangedAt = new Date();
   await user.save();
 
   return user;
