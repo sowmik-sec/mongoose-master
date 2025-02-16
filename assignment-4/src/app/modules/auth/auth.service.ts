@@ -23,9 +23,6 @@ const login = async (payload: TAuth) => {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Wrong Password");
   }
 
-  // let userData: Partial<TUser> = {};
-  // userData.username = user.username;
-  // userData.email = user.email;
   const accessToken = createToken(
     {
       _id: user._id,
