@@ -106,11 +106,22 @@ const getCourseWithReviewFromDB = async (courseId: string) => {
         as: "reviews",
       },
     },
+    {
+      $lookup: {
+        from: "users",
+        localField: "createdBy",
+        foreignField: "_id",
+        as: "createdBy",
+      },
+    },
+    {
+      $unwind: "$createdBy",
+    },
   ]);
   if (!result.length) {
     throw new AppError(404, "Course not found");
   }
-  return result;
+  return { course: result[0] };
 };
 
 const getBestCourseFromDB = async () => {
