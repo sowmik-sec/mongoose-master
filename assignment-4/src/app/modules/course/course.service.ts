@@ -4,8 +4,10 @@ import { courseSearchableFields } from "./course.constant";
 import { Course } from "./course.model";
 import { TCourse } from "./course.interface";
 import mongoose from "mongoose";
+import { JwtPayload } from "jsonwebtoken";
 
-const createCourseIntoDB = async (payload: TCourse) => {
+const createCourseIntoDB = async (user: JwtPayload, payload: TCourse) => {
+  payload.createdBy = user._id;
   const result = await Course.create(payload);
   return result;
 };

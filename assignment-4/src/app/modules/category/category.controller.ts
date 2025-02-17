@@ -3,7 +3,7 @@ import sendResponse from "../../utils/sendResponse";
 import { CategoryService } from "./category.service";
 
 const createCategory = catchAsync(async (req, res) => {
-  const result = await CategoryService.createCategoryIntoDB(req.body);
+  const result = await CategoryService.createCategoryIntoDB(req.user, req.body);
   sendResponse(res, {
     success: true,
     statusCode: 200,

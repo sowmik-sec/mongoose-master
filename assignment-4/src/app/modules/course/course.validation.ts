@@ -27,9 +27,6 @@ const createCourseValidationSchema = z.object({
     language: z.string().min(1, "Language is required"),
     provider: z.string().min(1, "Provider is required"),
     details: detailsSchema,
-    createdBy: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), {
-      message: "Invalid ObjectId",
-    }),
   }),
 });
 
