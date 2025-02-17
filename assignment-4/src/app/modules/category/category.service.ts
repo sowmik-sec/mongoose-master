@@ -19,6 +19,13 @@ const getAllCategoriesFromDB = async () => {
         localField: "createdBy",
         foreignField: "_id",
         as: "createdBy",
+        pipeline: [
+          {
+            $project: {
+              password: 0,
+            },
+          },
+        ],
       },
     },
     {
