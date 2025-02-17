@@ -9,7 +9,22 @@ const createCategoryIntoDB = async (user: JwtPayload, payload: TCategory) => {
 };
 
 const getAllCategoriesFromDB = async () => {
-  const result = await Category.find();
+  const result = await Category.aggregate([
+    {
+      $match: {},
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "createdBy",
+        foreignField: "_id",
+        as: "createdBy",
+      },
+    },
+    {
+      $unwind: "$createdBy",
+    },
+  ]);
   return result;
 };
 
