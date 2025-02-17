@@ -44,7 +44,7 @@ const getBestCourse = catchAsync(async (req, res) => {
 const updateCourse = catchAsync(async (req, res) => {
   const result = await CourseService.updateCourseIntoDB(
     req.params.id,
-    req.query
+    req.body
   );
   sendResponse(res, {
     success: true,

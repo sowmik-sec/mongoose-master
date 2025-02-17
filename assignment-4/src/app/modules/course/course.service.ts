@@ -197,7 +197,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
     }
   }
 
-  const result = await Course.findById(id).populate("category");
+  const result = await Course.findById(id).populate("categoryId");
   return result;
 };
 

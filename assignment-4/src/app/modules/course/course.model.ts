@@ -35,6 +35,7 @@ const courseSchema = new Schema<TCourse>(
     },
     tags: [
       {
+        _id: false,
         name: {
           type: String,
           required: true,
