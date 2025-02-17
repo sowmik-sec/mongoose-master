@@ -104,7 +104,28 @@ const getCourseWithReviewFromDB = async (courseId: string) => {
         localField: "_id",
         foreignField: "courseId",
         as: "reviews",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "createdBy",
+              foreignField: "_id",
+              as: "createdBy",
+              pipeline: [
+                {
+                  $project: {
+                    password: 0,
+                    passwordHistory: 0,
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
+    },
+    {
+      $unwind: "$createdBy",
     },
     {
       $lookup: {
@@ -112,6 +133,14 @@ const getCourseWithReviewFromDB = async (courseId: string) => {
         localField: "createdBy",
         foreignField: "_id",
         as: "createdBy",
+        pipeline: [
+          {
+            $project: {
+              password: 0,
+              passwordHistory: 0,
+            },
+          },
+        ],
       },
     },
     {
