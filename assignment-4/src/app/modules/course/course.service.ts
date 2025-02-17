@@ -58,10 +58,36 @@ const getCoursesFromDB = async (payload: Record<string, unknown>) => {
     { $sort: { [sortBy as string]: sortOrder === "asc" ? 1 : -1 } },
     {
       $facet: {
-        meta: [{ $count: "total" }],
+        meta: [
+          { $count: "total" },
+          {
+            $addFields: {
+              page: Number(page),
+              limit: Number(limit),
+            },
+          },
+        ],
         data: [
           { $skip: (Number(page) - 1) * Number(limit) },
           { $limit: Number(limit) },
+          {
+            $lookup: {
+              from: "users",
+              localField: "createdBy",
+              foreignField: "_id",
+              as: "createdBy",
+              pipeline: [
+                {
+                  $project: {
+                    password: 0,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $unwind: "$createdBy",
+          },
         ],
       },
     },
