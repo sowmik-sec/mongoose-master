@@ -38,6 +38,7 @@ export type TStudent = {
   permanentAddress: string;
   admissionSemester?: Types.ObjectId;
   academicDepartment?: Types.ObjectId;
+  academicFaculty: Types.ObjectId;
   isDeleted: boolean;
 };
 
