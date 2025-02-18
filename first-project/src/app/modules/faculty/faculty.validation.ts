@@ -28,23 +28,26 @@ const bloodGroupEnum = z.enum([
 
 // Main faculty schema
 const createFacultyValidationSchema = z.object({
-  id: z.string().min(1, 'ID is required'),
-  user: objectIdSchema,
-  designation: z.string().min(1, 'Designation is required'),
-  name: nameSchema,
-  gender: z.enum(['male', 'female'], {
-    required_error: 'Gender is required',
+  body: z.object({
+    password: z.string(),
+    faculty: z.object({
+      designation: z.string().min(1, 'Designation is required'),
+      name: nameSchema,
+      gender: z.enum(['male', 'female'], {
+        required_error: 'Gender is required',
+      }),
+      dateOfBirth: z.coerce.date().optional(),
+      email: z.string().email('Invalid email address'),
+      contactNo: z.string().min(1, 'Contact number is required'),
+      emergencyContactNo: z
+        .string()
+        .min(1, 'Emergency contact number is required'),
+      bloodGroup: bloodGroupEnum.optional(),
+      presentAddress: z.string().min(1, 'Present address is required'),
+      permanentAddress: z.string().min(1, 'Permanent address is required'),
+      academicDepartment: objectIdSchema,
+    }),
   }),
-  dateOfBirth: z.coerce.date().optional(),
-  email: z.string().email('Invalid email address'),
-  contactNo: z.string().min(1, 'Contact number is required'),
-  emergencyContactNo: z.string().min(1, 'Emergency contact number is required'),
-  bloodGroup: bloodGroupEnum.optional(),
-  presentAddress: z.string().min(1, 'Present address is required'),
-  permanentAddress: z.string().min(1, 'Permanent address is required'),
-  profileImg: z.string().min(1, 'Profile image is required'),
-  academicDepartment: objectIdSchema,
-  isDeleted: z.boolean().default(false),
 });
 
 // Update schema (all fields optional)

@@ -3,24 +3,28 @@ import { StudentControllers } from './student.controller';
 import validateRequest from '../../utils/validateRequest';
 import { studentValidations } from './student.validation';
 import auth from '../../middlewares/auth';
-import { USER_ROLE } from '../user/user.constant';
 const router = express.Router();
 
 // it will call controller func
 router.get(
   '/:id',
-  auth('admin', 'faculty'),
+  auth('superAdmin', 'admin', 'faculty'),
   StudentControllers.getSingleStudent,
 );
 router.patch(
   '/:id',
+  auth('superAdmin', 'admin', 'faculty'),
   validateRequest(studentValidations.updateStudentValidationSchema),
   StudentControllers.updateStudent,
 );
-router.get('/', auth(USER_ROLE.admin), StudentControllers.getAllStudents);
+router.get(
+  '/',
+  auth('superAdmin', 'admin', 'faculty'),
+  StudentControllers.getAllStudents,
+);
 router.delete(
   '/:id',
-  auth(USER_ROLE.admin),
+  auth('superAdmin', 'admin', 'faculty'),
   StudentControllers.deleteSingleStudent,
 );
 

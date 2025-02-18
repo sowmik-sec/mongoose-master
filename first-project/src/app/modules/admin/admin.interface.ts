@@ -16,7 +16,7 @@ export type TAdmin = {
   bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
   presentAddress: string;
   permanentAddress: string;
-  profileImg: string;
+  profileImg?: string;
   isDeleted: boolean;
 };
 

@@ -3,8 +3,6 @@ import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
 
 const createStudent = catchAsync(async (req, res) => {
-  console.log(req.file, 'file');
-  console.log(req.body, 'json data');
   const { password, student: studentData } = req.body;
 
   const result = await UserServices.createStudentIntoDB(
@@ -35,7 +33,7 @@ const createAdmin = catchAsync(async (req, res) => {
   });
 });
 const createFaculty = catchAsync(async (req, res) => {
-  const { password, admin: facultyData } = req.body;
+  const { password, faculty: facultyData } = req.body;
 
   const result = await UserServices.createFacultyIntoDB(
     req.file,
