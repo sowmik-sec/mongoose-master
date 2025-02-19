@@ -4,12 +4,13 @@ import catchAsync from '../../utils/catchAsync';
 import { FacultyServices } from './faculty.service';
 
 const getAllFaculties = catchAsync(async (req, res) => {
-  const result = await FacultyServices.getAllFacultiesFromDb(req.query);
+  const result = await FacultyServices.getAllFacultiesFromDB(req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'Faculties retrieved successfully',
-    data: result,
+    meta: result?.meta,
+    data: result?.result,
   });
 });
 const getSingleFaculty = catchAsync(async (req, res) => {

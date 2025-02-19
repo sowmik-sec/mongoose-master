@@ -1,6 +1,7 @@
 import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
 import { AcademicSemesterServices } from './academicSemester.service';
+import { StatusCodes } from 'http-status-codes';
 
 const createAcademicSemester = catchAsync(async (req, res) => {
   const result = await AcademicSemesterServices.createAcademicSemesterIntoDb(
@@ -14,13 +15,17 @@ const createAcademicSemester = catchAsync(async (req, res) => {
   });
 });
 
-const getAllAcademicSemester = catchAsync(async (req, res) => {
-  const result = await AcademicSemesterServices.getAllAcademicSemesterFromDb();
+const getAllAcademicSemesters = catchAsync(async (req, res) => {
+  const result = await AcademicSemesterServices.getAllAcademicSemestersFromDB(
+    req.query,
+  );
+
   sendResponse(res, {
+    statusCode: StatusCodes.OK,
     success: true,
-    statusCode: 200,
-    message: 'Academic Semesters are retrieved successfully',
-    data: result,
+    message: 'Academic semesters are retrieved successfully',
+    meta: result.meta,
+    data: result.result,
   });
 });
 const getSingleAcademicSemester = catchAsync(async (req, res) => {
@@ -49,7 +54,7 @@ const updateAcademicSemester = catchAsync(async (req, res) => {
 
 export const AcademicSemesterControllers = {
   createAcademicSemester,
-  getAllAcademicSemester,
+  getAllAcademicSemesters,
   getSingleAcademicSemester,
   updateAcademicSemester,
 };

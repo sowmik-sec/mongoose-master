@@ -43,6 +43,6 @@ router.get(
     USER_ROLE.faculty,
     USER_ROLE.student,
   ),
-  AcademicSemesterControllers.getAllAcademicSemester,
+  AcademicSemesterControllers.getAllAcademicSemesters,
 );
 export const AcademicSemesterRoutes = router;

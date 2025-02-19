@@ -7,16 +7,23 @@ import { Faculty } from './faculty.model';
 import { FacultySearchableFields } from './faculty.constant';
 import { TFaculty } from './faculty.interface';
 
-const getAllFacultiesFromDb = async (query: Record<string, unknown>) => {
-  const FacultyQuery = new QueryBuilder(Faculty.find(), query)
+const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
+  const facultyQuery = new QueryBuilder(
+    Faculty.find().populate('academicDepartment academicFaculty'),
+    query,
+  )
     .search(FacultySearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await FacultyQuery.modelQuery;
-  return result;
+  const result = await facultyQuery.modelQuery;
+  const meta = await facultyQuery.countTotal();
+  return {
+    meta,
+    result,
+  };
 };
 
 const getSingleFacultyFromDb = async (id: string) => {
@@ -78,7 +85,7 @@ const deleteSingleFacultyFromDb = async (id: string) => {
 };
 
 export const FacultyServices = {
-  getAllFacultiesFromDb,
+  getAllFacultiesFromDB,
   getSingleFacultyFromDb,
   updateFacultyIntoDB,
   deleteSingleFacultyFromDb,

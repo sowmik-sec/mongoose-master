@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import catchAsync from '../../utils/catchAsync';
-import { OfferedCourseService } from './offeredCourse.service';
+import { OfferedCourseServices } from './offeredCourse.service';
 import sendResponse from '../../utils/sendResponse';
 import { StatusCodes } from 'http-status-codes';
 
 const createOfferedCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await OfferedCourseService.createOfferedCourseIntoDB(req.body);
+  const result = await OfferedCourseServices.createOfferedCourseIntoDB(
+    req.body,
+  );
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -14,18 +16,19 @@ const createOfferedCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getAllOfferedCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await OfferedCourseService.getAllOfferedCoursesFromDB(
+  const result = await OfferedCourseServices.getAllOfferedCoursesFromDB(
     req.query,
   );
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Offered Courses retrieved successfully !',
-    data: result,
+    meta: result?.meta,
+    data: result?.result,
   });
 });
 const getMyOfferedCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await OfferedCourseService.getMyOfferedCoursesFromDB(
+  const result = await OfferedCourseServices.getMyOfferedCoursesFromDB(
     req.user.userId,
     req.query,
   );
@@ -38,7 +41,7 @@ const getMyOfferedCourse = catchAsync(async (req: Request, res: Response) => {
 });
 const getSingleOfferedCourse = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await OfferedCourseService.getSingleOfferedCourseFromDB(
+    const result = await OfferedCourseServices.getSingleOfferedCourseFromDB(
       req.params.id,
     );
     sendResponse(res, {
@@ -50,7 +53,7 @@ const getSingleOfferedCourse = catchAsync(
   },
 );
 const updateOfferedCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await OfferedCourseService.updateOfferedCourseIntoDB(
+  const result = await OfferedCourseServices.updateOfferedCourseIntoDB(
     req.params.id,
     req.body,
   );
@@ -62,7 +65,7 @@ const updateOfferedCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const deleteOfferedCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await OfferedCourseService.deleteOfferedCourseFromDB(
+  const result = await OfferedCourseServices.deleteOfferedCourseFromDB(
     req.params.id,
   );
   sendResponse(res, {

@@ -7,16 +7,20 @@ import { Admin } from './admin.model';
 import { AdminSearchableFields } from './admin.constant';
 import { TAdmin } from './admin.interface';
 
-const getAllAdminsFromDb = async (query: Record<string, unknown>) => {
-  const AdminQuery = new QueryBuilder(Admin.find(), query)
+const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
+  const adminQuery = new QueryBuilder(Admin.find(), query)
     .search(AdminSearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await AdminQuery.modelQuery;
-  return result;
+  const result = await adminQuery.modelQuery;
+  const meta = await adminQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
 };
 
 const getSingleAdminFromDb = async (id: string) => {
@@ -78,7 +82,7 @@ const deleteSingleAdminFromDb = async (id: string) => {
 };
 
 export const AdminServices = {
-  getAllAdminsFromDb,
+  getAllAdminsFromDB,
   getSingleAdminFromDb,
   updateAdminIntoDB,
   deleteSingleAdminFromDb,
