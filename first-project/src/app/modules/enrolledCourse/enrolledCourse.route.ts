@@ -9,7 +9,7 @@ const router = express.Router();
 
 // it will call controller func
 router.post(
-  '/create-course',
+  '/create-enrolled-course',
   auth(USER_ROLE.student),
   validateRequest(
     EnrolledCourseValidations.createEnrolledCourseValidationZodSchema,

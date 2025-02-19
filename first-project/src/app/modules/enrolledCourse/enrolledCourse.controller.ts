@@ -11,7 +11,7 @@ const createEnrolledCourse = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: 'Course is created successfully',
+    message: 'Course enrolled successfully',
     data: result,
   });
 });
@@ -24,7 +24,7 @@ const updateEnrolledCourseMarks = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    message: 'Course is created successfully',
+    message: 'Course enrollment is updated successfully',
     data: result,
   });
 });
